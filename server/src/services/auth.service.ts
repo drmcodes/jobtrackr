@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User";
 import { RegisterInput, LoginInput, TokenPayload } from "../types/auth.types";
+import { access } from "node:fs";
 
 const generateAccessToken = (userId: string): string => {
   return jwt.sign(
@@ -51,5 +52,41 @@ export const loginUser = async (input: LoginInput) => {
   const refreshToken = generateRefreshToken(user._id.toString());
 
   user.refreshTokens.push(refreshToken);
+  await user.save();
+  return { accessToken, refreshToken, user };
+};
+
+export const refreshAccessToken = async (token: string) => {
+  const payload = jwt.verify(
+    token,
+    process.env.JWT_rEFRESH_SECRET as string,
+  ) as TokenPayload;
+
+  const user = await User.findById(payload.userId);
+  if (!user) {
+    throw new Error("Usuario no encontrado");
+  }
+
+  const tokenExists = user.refreshTokens.includes(token);
+  if (!tokenExists) {
+    throw new Error("Token de refresco inválido");
+  }
+
+  const newAccessToken = generateAccessToken(user._id.toString());
+  return { accessToken: newAccessToken };
+};
+
+export const logoutUser = async (token: string) => {
+  const payload = jwt.verify(
+    token,
+    process.env.JWT_REFRESH_SECRET as string,
+  ) as TokenPayload;
+
+  const user = await User.findById(payload.userId);
+  if (!user) {
+    throw new Error("Usuario no encontrado");
+  }
+
+  user.refreshTokens = user.refreshTokens.filter((t) => t !== token);
   await user.save();
 };

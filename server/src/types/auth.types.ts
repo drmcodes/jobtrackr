@@ -11,4 +11,4 @@ export interface LoginInput {
 
 export interface TokenPayload {
   userId: string;
-}       
+}

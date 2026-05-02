@@ -1,6 +1,9 @@
 #Dependencies 
 /node_modules
-
+/node_modules/
+node_modules/*
+node_modules/**/*
+server/node_modules
 # Enviroment variables
 .env
 .env.local
