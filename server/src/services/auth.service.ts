@@ -2,7 +2,6 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User";
 import { RegisterInput, LoginInput, TokenPayload } from "../types/auth.types";
-import { access } from "node:fs";
 
 const generateAccessToken = (userId: string): string => {
   return jwt.sign(
@@ -28,7 +27,7 @@ export const registerUser = async (input: RegisterInput) => {
 
   const hashedPassword = await bcrypt.hash(input.password, 10);
 
-  const user = new User({
+  const user = await User.create({
     name: input.name,
     email: input.email,
     password: hashedPassword,
@@ -59,7 +58,7 @@ export const loginUser = async (input: LoginInput) => {
 export const refreshAccessToken = async (token: string) => {
   const payload = jwt.verify(
     token,
-    process.env.JWT_rEFRESH_SECRET as string,
+    process.env.JWT_REFRESH_SECRET as string,
   ) as TokenPayload;
 
   const user = await User.findById(payload.userId);
