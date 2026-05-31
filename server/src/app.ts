@@ -6,7 +6,12 @@ import userRoutes from "./routes/user.routes";
 
 const app = express();
 
-app.use(cors({ origin: "http://localhost:5173" }));
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://jobtracker-front.netlify.app",
+  ]
+}));
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
