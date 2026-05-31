@@ -7,7 +7,7 @@ export const createJobSchema = z.object({
     .enum(["saved", "applied", "interviewing", "offer", "rejected"])
     .optional(),
   notes: z.string().optional(),
-  appliedAt: z.coerce.date().optional(),
+  appliedAt: z.string().optional(),
 });
 
 export const updateJobSchema = createJobSchema.partial();
