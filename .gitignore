@@ -10,7 +10,7 @@ server/node_modules
 .env.production
 
 # Build output
-/dist
+dist/
 
 #Logs
 *.log
